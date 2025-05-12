@@ -1,13 +1,12 @@
 package com.example.app;
 
 import org.json.*;
-import org.json.JSONObject;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class RedditProcessor {
 
     
     public void setUrl(String url) throws IOException {
-        this.url = new URL(url);
+        this.url = URI.create(url).toURL();
     }
 
     public URL getUrl() {
@@ -72,7 +71,11 @@ public class RedditProcessor {
      * Reddit Json API returns 25 posts by default so 4 api requests are made per subreddit.
      */
     public void processStories(int numOfPosts) throws Exception{
-        int limit = (int) Math.ceil(numOfPosts / 25);
+
+        int limit = (int) Math.ceil((double) numOfPosts / 25);
+
+        System.out.println(limit);
+        
 
         String after;  
         
@@ -82,12 +85,11 @@ public class RedditProcessor {
             }
             else{
                 after = stories.get(stories.size() - 1).getName();
-                URL currUrl = new URL(this.url.toString() + "&after=" + after);
+                URL currUrl = new URI(this.url.toString() + "&after=" + after).toURL();
                 this.stories.addAll(getStoriesFromURL(currUrl));
             }
         }
         
-        System.out.println(stories.toString());
     }
 
 }
